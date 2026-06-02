@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IEP Builder v5.0 | Niles North High School</title>
+    <title>IEP Builder v6.0 | Niles North</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -329,6 +329,40 @@
             .course-grade-select { min-height: 44px; font-size: 1rem; }
             .course-remove-btn { min-height: 44px; min-width: 44px; }
         }
+
+        /* Functional domain card selectors (v6) */
+        .func-card {
+            cursor: pointer;
+            padding: 8px 12px;
+            min-height: 44px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background: white;
+            color: #374151;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.15s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .func-card:hover { border-color: #4c2c7b; color: #4c2c7b; }
+        .func-card.selected { background: #1a237e; color: white; border-color: #1a237e; }
+        .func-card-row { display: flex; gap: 0.4rem; }
+        @media (max-width: 640px) {
+            .func-card-row { flex-wrap: wrap; }
+            .func-card { flex: 1 1 calc(50% - 0.2rem); }
+        }
+
+        /* Generate tab output (v6) */
+        #genOutputArea {
+            min-height: 500px;
+            width: 100%;
+            font-family: 'Source Sans 3', 'Inter', system-ui, sans-serif;
+            line-height: 1.7;
+        }
     </style>
 </head>
 <body class="bg-slate-100">
@@ -347,14 +381,13 @@
                     <div>
                         <div class="flex items-baseline gap-x-2">
                             <span class="font-bold text-2xl tracking-tight">NILES NORTH</span>
-                            <span class="text-purple-200 text-sm font-semibold tracking-[2px] pt-1">HIGH SCHOOL</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="text-right">
                     <div class="text-lg font-semibold tracking-tight">IEP Builder</div>
-                    <div class="text-purple-200 text-xs font-medium tracking-[0.5px]">v5.0</div>
+                    <div class="text-purple-200 text-xs font-medium tracking-[0.5px]">v6.0</div>
                 </div>
             </div>
         </div>
@@ -402,7 +435,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- LEFT: INPUT FORM -->
-            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <div id="leftColumn" class="lg:col-span-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                 <div class="flex items-center gap-x-2 mb-5 pb-3 border-b">
                     <i class="fa-solid fa-edit text-[#4c2c7b] text-lg"></i>
                     <h2 id="activeSectionLabel" class="font-semibold text-xl text-slate-800">Student Information &amp; Data</h2>
@@ -487,6 +520,19 @@
                                 <option>Reading 02 — Intro to Literacy Comprehension (RDYR02)</option>
                                 <option>Reading 03 — Literacy Applications (RDYR03)</option>
                                 <option>Integrated Reading 3-4 (RDYR39)</option>
+                                <option>None</option>
+                            </select>
+                        </div>
+                        <div id="sld-math-program-row" class="mb-4 hidden">
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Current math intervention or support program</label>
+                            <select id="sld-math-program" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="">Select...</option>
+                                <option>Math Extension — Algebra 1 (MAYA03-E)</option>
+                                <option>Math Extension — Geometry (MAYG03-E)</option>
+                                <option>Math Extension — Algebra 2 (MAYA11-E)</option>
+                                <option>Math Extension — General (MASM03)</option>
+                                <option>Ascend Math</option>
+                                <option>IXL Math</option>
                                 <option>None</option>
                             </select>
                         </div>
@@ -737,6 +783,19 @@
                                         <option>Reading 02 — Intro to Literacy Comprehension (RDYR02)</option>
                                         <option>Reading 03 — Literacy Applications (RDYR03)</option>
                                         <option>Integrated Reading 3-4 (RDYR39)</option>
+                                        <option>None</option>
+                                    </select>
+                                </div>
+                                <div id="md-sld-math-program-row" class="mb-3 hidden">
+                                    <label class="text-xs font-semibold text-slate-600 block mb-1">Current math intervention or support program</label>
+                                    <select id="md-sld-math-program" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                        <option value="">Select...</option>
+                                        <option>Math Extension — Algebra 1 (MAYA03-E)</option>
+                                        <option>Math Extension — Geometry (MAYG03-E)</option>
+                                        <option>Math Extension — Algebra 2 (MAYA11-E)</option>
+                                        <option>Math Extension — General (MASM03)</option>
+                                        <option>Ascend Math</option>
+                                        <option>IXL Math</option>
                                         <option>None</option>
                                     </select>
                                 </div>
@@ -1019,27 +1078,155 @@
                 <!-- 4. Academic Performance -->
                 <div class="form-section" data-wstep="2">
                     <div class="section-header">ACADEMIC PERFORMANCE</div>
-                    <div class="mb-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="text-xs font-semibold text-slate-600">Subject Performance</label>
-                            <button type="button" onclick="addSubjectRow()"
-                                    class="text-xs font-semibold text-purple-700 hover:text-purple-900 border border-purple-200 rounded px-2 py-1 hover:bg-purple-50">
-                                ＋ Add Subject
-                            </button>
+
+                    <!-- Literacy -->
+                    <div class="border border-slate-200 border-l-4 border-l-purple-300 rounded-lg p-4 mb-4 bg-slate-50">
+                        <div class="text-sm font-bold text-purple-800 mb-3">Literacy</div>
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Performance Level</label>
+                            <select id="acad-perf-literacy" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="">Select...</option>
+                                <option>Significantly Below Grade Level</option>
+                                <option>Below Grade Level</option>
+                                <option>Approaching Grade Level</option>
+                                <option>At Grade Level</option>
+                                <option>Above Grade Level</option>
+                            </select>
                         </div>
-                        <div id="subjectRows"></div>
-                    </div>
-                    <div class="mb-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="text-xs font-semibold text-slate-600">Effectiveness of Past Interventions</label>
-                            <button type="button" onclick="addInterventionRow()"
-                                    class="text-xs font-semibold text-purple-700 hover:text-purple-900 border border-purple-200 rounded px-2 py-1 hover:bg-purple-50">
-                                ＋ Add Intervention
-                            </button>
+                        <div class="mb-3">
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Common barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-attention" value="Attention" class="acad-barrier rounded border-slate-300"><span>Attention</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-speed" value="Processing Speed" class="acad-barrier rounded border-slate-300"><span>Processing Speed</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-organization" value="Organization" class="acad-barrier rounded border-slate-300"><span>Organization</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-behavior" value="Behavior" class="acad-barrier rounded border-slate-300"><span>Behavior</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-attendance" value="Attendance" class="acad-barrier rounded border-slate-300"><span>Attendance</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-language" value="Language Processing" class="acad-barrier rounded border-slate-300"><span>Language Processing</span></label>
+                            </div>
                         </div>
-                        <div id="interventionRows"></div>
+                        <div>
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Subject-specific barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-decoding" value="Decoding" class="acad-barrier rounded border-slate-300"><span>Decoding</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-fluency" value="Reading Fluency" class="acad-barrier rounded border-slate-300"><span>Reading Fluency</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-comprehension" value="Reading Comprehension" class="acad-barrier rounded border-slate-300"><span>Reading Comprehension</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-written" value="Written Expression" class="acad-barrier rounded border-slate-300"><span>Written Expression</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-spelling" value="Spelling" class="acad-barrier rounded border-slate-300"><span>Spelling</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-literacy-vocab" value="Vocabulary" class="acad-barrier rounded border-slate-300"><span>Vocabulary</span></label>
+                            </div>
+                        </div>
                     </div>
-                    <div>
+
+                    <!-- Math -->
+                    <div class="border border-slate-200 border-l-4 border-l-purple-300 rounded-lg p-4 mb-4 bg-slate-50">
+                        <div class="text-sm font-bold text-purple-800 mb-3">Math</div>
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Performance Level</label>
+                            <select id="acad-perf-math" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="">Select...</option>
+                                <option>Significantly Below Grade Level</option>
+                                <option>Below Grade Level</option>
+                                <option>Approaching Grade Level</option>
+                                <option>At Grade Level</option>
+                                <option>Above Grade Level</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Common barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-attention" value="Attention" class="acad-barrier rounded border-slate-300"><span>Attention</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-speed" value="Processing Speed" class="acad-barrier rounded border-slate-300"><span>Processing Speed</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-organization" value="Organization" class="acad-barrier rounded border-slate-300"><span>Organization</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-behavior" value="Behavior" class="acad-barrier rounded border-slate-300"><span>Behavior</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-attendance" value="Attendance" class="acad-barrier rounded border-slate-300"><span>Attendance</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-language" value="Language Processing" class="acad-barrier rounded border-slate-300"><span>Language Processing</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Subject-specific barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-calculation" value="Calculation" class="acad-barrier rounded border-slate-300"><span>Calculation</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-problemsolving" value="Problem Solving / Application" class="acad-barrier rounded border-slate-300"><span>Problem Solving / Application</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-numbersense" value="Number Sense" class="acad-barrier rounded border-slate-300"><span>Number Sense</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-factfluency" value="Fact Fluency" class="acad-barrier rounded border-slate-300"><span>Fact Fluency</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-math-multistep" value="Multi-Step Reasoning" class="acad-barrier rounded border-slate-300"><span>Multi-Step Reasoning</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Science -->
+                    <div class="border border-slate-200 border-l-4 border-l-purple-300 rounded-lg p-4 mb-4 bg-slate-50">
+                        <div class="text-sm font-bold text-purple-800 mb-3">Science</div>
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Performance Level</label>
+                            <select id="acad-perf-science" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="">Select...</option>
+                                <option>Significantly Below Grade Level</option>
+                                <option>Below Grade Level</option>
+                                <option>Approaching Grade Level</option>
+                                <option>At Grade Level</option>
+                                <option>Above Grade Level</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Common barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-attention" value="Attention" class="acad-barrier rounded border-slate-300"><span>Attention</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-speed" value="Processing Speed" class="acad-barrier rounded border-slate-300"><span>Processing Speed</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-organization" value="Organization" class="acad-barrier rounded border-slate-300"><span>Organization</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-behavior" value="Behavior" class="acad-barrier rounded border-slate-300"><span>Behavior</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-attendance" value="Attendance" class="acad-barrier rounded border-slate-300"><span>Attendance</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-language" value="Language Processing" class="acad-barrier rounded border-slate-300"><span>Language Processing</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Subject-specific barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-vocab" value="Scientific Vocabulary" class="acad-barrier rounded border-slate-300"><span>Scientific Vocabulary</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-lab" value="Lab / Hands-on Application" class="acad-barrier rounded border-slate-300"><span>Lab / Hands-on Application</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-reading" value="Reading Scientific Text" class="acad-barrier rounded border-slate-300"><span>Reading Scientific Text</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-science-data" value="Data Interpretation" class="acad-barrier rounded border-slate-300"><span>Data Interpretation</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Science -->
+                    <div class="border border-slate-200 border-l-4 border-l-purple-300 rounded-lg p-4 mb-5 bg-slate-50">
+                        <div class="text-sm font-bold text-purple-800 mb-3">Social Science</div>
+                        <div class="mb-3">
+                            <label class="text-xs font-semibold text-slate-600 block mb-1">Performance Level</label>
+                            <select id="acad-perf-socialscience" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
+                                <option value="">Select...</option>
+                                <option>Significantly Below Grade Level</option>
+                                <option>Below Grade Level</option>
+                                <option>Approaching Grade Level</option>
+                                <option>At Grade Level</option>
+                                <option>Above Grade Level</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Common barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-attention" value="Attention" class="acad-barrier rounded border-slate-300"><span>Attention</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-speed" value="Processing Speed" class="acad-barrier rounded border-slate-300"><span>Processing Speed</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-organization" value="Organization" class="acad-barrier rounded border-slate-300"><span>Organization</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-behavior" value="Behavior" class="acad-barrier rounded border-slate-300"><span>Behavior</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-attendance" value="Attendance" class="acad-barrier rounded border-slate-300"><span>Attendance</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-language" value="Language Processing" class="acad-barrier rounded border-slate-300"><span>Language Processing</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-semibold text-slate-500 mb-1.5">Subject-specific barriers:</div>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-reading" value="Reading Comprehension of Complex Text" class="acad-barrier rounded border-slate-300"><span>Reading Comprehension of Complex Text</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-writing" value="Writing Extended Responses" class="acad-barrier rounded border-slate-300"><span>Writing Extended Responses</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-reasoning" value="Historical Reasoning" class="acad-barrier rounded border-slate-300"><span>Historical Reasoning</span></label>
+                                <label class="flex items-center gap-x-2 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" id="bar-socialscience-vocab" value="Vocabulary / Terminology" class="acad-barrier rounded border-slate-300"><span>Vocabulary / Terminology</span></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
                         <div class="flex items-center justify-between mb-2">
                             <label class="text-xs font-semibold text-slate-600">Assessment Data</label>
                             <button type="button" onclick="addAssessmentRow()"
@@ -1049,7 +1236,7 @@
                         </div>
                         <div id="assessmentRows"></div>
                     </div>
-                    <div class="mt-5">
+                    <div>
                         <label class="text-xs font-semibold text-slate-600 block mb-1">Evaluation Results</label>
                         <textarea id="eval-results" rows="3" class="form-textarea w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="Summarize any recent evaluation findings — psych, speech, OT, etc. Reference report date if known."></textarea>
                         <p class="text-[10px] text-slate-400 mt-1">e.g., Triennial re-evaluation, psych report, speech evaluation, OT assessment</p>
@@ -1116,20 +1303,6 @@
                                 <input type="text" id="courseOtherText" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="Describe other course(s) not listed above...">
                             </div>
                         </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600 block mb-1">Current accommodations in use</label>
-                            <textarea id="ed-accommodations" rows="3" class="form-textarea w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="e.g., extended time, preferential seating, reduced assignments, text-to-speech"></textarea>
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-600 block mb-1">Accommodation effectiveness</label>
-                            <select id="ed-accom-effectiveness" class="form-input w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white">
-                                <option value="">Select...</option>
-                                <option>Highly effective — student accesses curriculum successfully with accommodations</option>
-                                <option>Mostly effective — some barriers remain despite accommodations</option>
-                                <option>Partially effective — accommodations help but significant barriers remain</option>
-                                <option>Minimally effective — accommodations are insufficient; additional supports needed</option>
-                            </select>
-                        </div>
                         <!-- Teacher Feedback DNA -->
                         <div class="pt-4 border-t border-slate-200">
                             <div class="text-xs font-semibold text-slate-600 mb-0.5">
@@ -1158,83 +1331,185 @@
                     <div class="section-header">FUNCTIONAL PERFORMANCE</div>
 
                     <div class="mb-5">
-                        <label class="text-xs font-semibold text-slate-600 block mb-1">Functional Skills Rating Scale</label>
-                        <div class="text-[10px] text-slate-400 mb-3">1 — Significant Difficulty &nbsp;·&nbsp; 2 — Moderate Difficulty &nbsp;·&nbsp; 3 — Mild Difficulty &nbsp;·&nbsp; 4 — Age Appropriate</div>
-                        <div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Organization &amp; Planning</span>
-                                <div class="flex gap-x-1" data-domain="org-planning">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
+                        <div class="text-xs font-bold text-purple-800 border-b border-purple-200 pb-1 mb-4">EXECUTIVE FUNCTIONING</div>
+                        <div class="space-y-5">
+                            <div data-funcdomain="func-org">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Organization &amp; Planning</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
                                 </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-org-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-org-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., frequently loses materials between classes">
                             </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Task Initiation</span>
-                                <div class="flex gap-x-1" data-domain="task-init">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
+                            <div data-funcdomain="func-init">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Task Initiation</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
                                 </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-init-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-init-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., requires multiple prompts to begin independent work">
                             </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Attention &amp; Focus</span>
-                                <div class="flex gap-x-1" data-domain="attention">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
+                            <div data-funcdomain="func-attn">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Attention &amp; Focus</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
                                 </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-attn-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-attn-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., attention decreases significantly after 10–15 minutes">
                             </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Emotional Regulation</span>
-                                <div class="flex gap-x-1" data-domain="emotion-reg">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
+                            <div data-funcdomain="func-directions">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Following Multi-Step Directions</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
                                 </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Social Interaction</span>
-                                <div class="flex gap-x-1" data-domain="social">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Independent Work Completion</span>
-                                <div class="flex gap-x-1" data-domain="indep-work">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2 border-b border-slate-100">
-                                <span class="text-xs text-slate-700 flex-1">Following Multi-Step Directions</span>
-                                <div class="flex gap-x-1" data-domain="multi-step">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between py-2">
-                                <span class="text-xs text-slate-700 flex-1">Self-Advocacy</span>
-                                <div class="flex gap-x-1" data-domain="self-adv">
-                                    <button type="button" data-val="1" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-red-300 hover:bg-red-50 hover:text-red-600 transition-colors">1</button>
-                                    <button type="button" data-val="2" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-amber-300 hover:bg-amber-50 hover:text-amber-600 transition-colors">2</button>
-                                    <button type="button" data-val="3" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 transition-colors">3</button>
-                                    <button type="button" data-val="4" onclick="setRating(this)" class="rating-btn w-8 h-8 text-xs font-bold rounded border border-slate-300 bg-white text-slate-500 hover:border-green-300 hover:bg-green-50 hover:text-green-600 transition-colors">4</button>
-                                </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-directions-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-directions-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., needs written steps in addition to verbal">
                             </div>
                         </div>
                     </div>
+
+                    <div class="mb-5">
+                        <div class="text-xs font-bold text-purple-800 border-b border-purple-200 pb-1 mb-4">SOCIAL-EMOTIONAL</div>
+                        <div class="space-y-5">
+                            <div data-funcdomain="func-reg">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Emotional Regulation</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
+                                </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-reg-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-reg-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., difficulty recovering from redirection in class">
+                            </div>
+                            <div data-funcdomain="func-social">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Social Interaction</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
+                                </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-social-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-social-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., engages well 1:1 but struggles in group settings">
+                            </div>
+                            <div data-funcdomain="func-work">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Independent Work Completion</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
+                                </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-work-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-work-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., completes work when chunked but not full assignments">
+                            </div>
+                            <div data-funcdomain="func-advocacy">
+                                <div class="text-xs font-semibold text-slate-700 mb-1.5">Self-Advocacy</div>
+                                <div class="func-card-row mb-2">
+                                    <div class="func-card" data-level="Significant Difficulty" onclick="setFuncCard(this)">Significant Difficulty</div>
+                                    <div class="func-card" data-level="Moderate Difficulty" onclick="setFuncCard(this)">Moderate Difficulty</div>
+                                    <div class="func-card" data-level="Mild Difficulty" onclick="setFuncCard(this)">Mild Difficulty</div>
+                                    <div class="func-card" data-level="Age Appropriate" onclick="setFuncCard(this)">Age Appropriate</div>
+                                </div>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Most evident in:</label>
+                                <select id="func-advocacy-setting" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white mb-2">
+                                    <option value="">Select...</option>
+                                    <option>Across all settings</option>
+                                    <option>Academic classes primarily</option>
+                                    <option>Unstructured time (lunch, passing periods, transitions)</option>
+                                    <option>Both structured and unstructured settings</option>
+                                    <option>Testing situations</option>
+                                </select>
+                                <label class="text-[10px] font-semibold text-slate-500 block mb-1">Specific observation (optional)</label>
+                                <input type="text" id="func-advocacy-obs" class="form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="e.g., rarely asks for help even when visibly confused">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-200">
+                        <label class="text-xs font-semibold text-slate-600 block mb-2">Behavior Intervention Plan (BIP) in place?</label>
+                        <div class="flex gap-x-6">
+                            <label class="flex items-center gap-x-2 text-xs text-slate-700 cursor-pointer"><input type="radio" name="bip" id="bip-yes" value="Yes" class="border-slate-300"><span>Yes</span></label>
+                            <label class="flex items-center gap-x-2 text-xs text-slate-700 cursor-pointer"><input type="radio" name="bip" id="bip-no" value="No" class="border-slate-300" checked><span>No</span></label>
+                        </div>
+                    </div>
+
 
                 </div>
 
@@ -1419,25 +1694,12 @@
 
                 <!-- 10. Generate Step -->
                 <div class="form-section wstep-hidden" data-wstep="8" id="step-generate-panel">
-                    <div class="section-header">READY TO GENERATE</div>
-                    <div class="py-4 text-center">
-                        <p class="text-sm text-slate-600 mb-4">All sections complete. Click below to generate the Present Levels narrative, or use the button in the right panel at any time.</p>
-                        <button onclick="generatePresentLevels()"
-                                class="inline-flex items-center justify-center gap-x-3 bg-[#4c2c7b] hover:bg-[#2c0663] text-white font-semibold text-base py-3 px-8 rounded-xl shadow-lg active:scale-[0.985] transition-all">
-                            <i class="fa-solid fa-magic"></i>
-                            <span>Generate Present Levels</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
+                    <div class="section-header">GENERATE PRESENT LEVELS</div>
 
-            <!-- RIGHT: OUTPUT -->
-            <div class="lg:col-span-5">
-                <div class="sticky top-6">
                     <button id="generateBtn" onclick="generatePresentLevels()"
-                            class="w-full flex items-center justify-center gap-x-3 bg-[#4c2c7b] hover:bg-[#2c0663] text-white font-semibold text-base py-4 px-6 rounded-2xl shadow-lg active:scale-[0.985] transition-all mb-3">
+                            class="w-full flex items-center justify-center gap-x-3 bg-[#4c2c7b] hover:bg-[#2c0663] text-white font-semibold text-base py-4 px-6 rounded-2xl shadow-lg active:scale-[0.985] transition-all mb-4">
                         <i class="fa-solid fa-magic"></i>
-                        <span>GENERATE PRESENT LEVELS</span>
+                        <span>GENERATE PRESENT LEVELS DRAFT</span>
                     </button>
 
                     <div class="flex items-center justify-between mb-2 px-1">
@@ -1453,11 +1715,11 @@
                     </div>
 
                     <div id="output"
-                         class="output-box bg-white border border-slate-200 rounded-2xl p-5 min-h-[480px] max-h-[620px] overflow-auto text-slate-700 shadow-inner ring-1 ring-purple-100">
-                        <div class="flex flex-col items-center justify-center h-full text-center py-16 text-slate-400">
+                         class="output-box bg-white border border-slate-200 rounded-2xl p-5 min-h-[500px] overflow-auto text-slate-700 shadow-inner ring-1 ring-purple-100">
+                        <div class="flex flex-col items-center justify-center text-center py-24 text-slate-400">
                             <i class="fa-solid fa-file-lines text-5xl mb-4 text-slate-300"></i>
                             <p class="text-sm font-medium">Your professional Present Levels narrative will appear here.</p>
-                            <p class="text-xs mt-2 max-w-[240px]">Complete the form and click <strong>Generate Present Levels</strong>.</p>
+                            <p class="text-xs mt-2 max-w-[240px]">Click <strong>Generate Present Levels Draft</strong> above.</p>
                         </div>
                     </div>
 
@@ -1481,7 +1743,7 @@
 
         <!-- Subtle Footer -->
         <div class="mt-6 text-center">
-            <p class="text-[10px] text-slate-400">Created by Consult Granato Education LLC &nbsp;·&nbsp; v5.0</p>
+            <p class="text-[10px] text-slate-400">Created by Consult Granato Education LLC &nbsp;·&nbsp; v6.0</p>
         </div>
     </div>
 
@@ -2034,6 +2296,61 @@
             }, 2600);
         }
 
+        // ─── Academic Subjects (v6) ─────────────────────────────────────────────
+        const ACAD_SUBJECTS = [
+            { key: 'literacy',       label: 'Literacy' },
+            { key: 'math',           label: 'Math' },
+            { key: 'science',        label: 'Science' },
+            { key: 'socialscience',  label: 'Social Science' }
+        ];
+
+        function collectAcademicSubjects() {
+            return ACAD_SUBJECTS.map(s => {
+                const levelEl = document.getElementById('acad-perf-' + s.key);
+                const barriers = Array.from(document.querySelectorAll('input.acad-barrier'))
+                    .filter(cb => cb.checked && cb.id.startsWith('bar-' + s.key + '-'))
+                    .map(cb => cb.value);
+                return { key: s.key, label: s.label, level: levelEl ? levelEl.value : '', barriers };
+            });
+        }
+
+        // ─── Functional Domains (v6) ────────────────────────────────────────────
+        const FUNC_DOMAINS = [
+            { id: 'func-org',        label: 'Organization and planning',          group: 'ef' },
+            { id: 'func-init',       label: 'Task initiation',                    group: 'ef' },
+            { id: 'func-attn',       label: 'Attention and focus',                group: 'ef' },
+            { id: 'func-directions', label: 'Following multi-step directions',    group: 'ef' },
+            { id: 'func-reg',        label: 'Emotional regulation',               group: 'se' },
+            { id: 'func-social',     label: 'Social interaction',                 group: 'se' },
+            { id: 'func-work',       label: 'Independent work completion',        group: 'se' },
+            { id: 'func-advocacy',   label: 'Self-advocacy',                      group: 'se' }
+        ];
+
+        function setFuncCard(card) {
+            const row = card.closest('.func-card-row');
+            if (!row) return;
+            row.querySelectorAll('.func-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+        }
+
+        function getFuncDomainLevel(domainId) {
+            const wrap = document.querySelector(`[data-funcdomain="${domainId}"]`);
+            if (!wrap) return '';
+            const sel = wrap.querySelector('.func-card.selected');
+            return sel ? sel.dataset.level : '';
+        }
+
+        function collectFunctionalDomains() {
+            return FUNC_DOMAINS.map(d => ({
+                id: d.id,
+                label: d.label,
+                group: d.group,
+                level: getFuncDomainLevel(d.id),
+                setting: (document.getElementById(d.id + '-setting') || {}).value || '',
+                obs: ((document.getElementById(d.id + '-obs') || {}).value || '').trim()
+            }));
+        }
+
         function collectFormData() {
             const g = id => document.getElementById(id);
             const gv = id => (g(id) || {}).value || '';
@@ -2049,6 +2366,7 @@
                 functionalStrengthsOther: gv('str-fn-other').trim(),
                 sldDeficits: Array.from(document.querySelectorAll('#block-sld input[type="checkbox"]:checked')).map(el => el.value),
                 sldProgram: gv('sld-program'),
+                sldMathProgram: gv('sld-math-program'),
                 asdSocial: gv('asd-social'), asdSensory: gv('asd-sensory'),
                 asdExec: gv('asd-exec'), asdBehavior: gv('asd-behavior'),
                 ohiAttention: gv('ohi-attention'), ohiMedical: gv('ohi-medical'), ohiAttendance: gv('ohi-attendance'),
@@ -2061,23 +2379,12 @@
                 sliReceptive: gv('sli-receptive'), sliExpressive: gv('sli-expressive'), sliImpact: gv('sli-impact'),
                 edCoursesList: selectedCourses.filter(c => c.code !== 'OTHER').map(c => ({ name: c.name, code: c.code, grade: c.grade || 'A' })),
                 edCoursesOther: gv('courseOtherText').trim(),
-                subjectRows: Array.from(document.querySelectorAll('.subject-row')).map(row => ({
-                    subject: row.querySelector('.subj-area').value,
-                    level: row.querySelector('.subj-level').value,
-                    barriers: Array.from(row.querySelectorAll('.subj-barrier:checked')).map(el => el.value)
-                })),
-                interventionRows: Array.from(document.querySelectorAll('.intervention-row')).map(row => ({
-                    name: row.querySelector('.interv-name').value.trim(),
-                    duration: row.querySelector('.interv-duration').value,
-                    outcome: row.querySelector('.interv-outcome').value,
-                    continuing: (row.querySelector('.interv-cont:checked') || {}).value || ''
-                })),
+                academicSubjects: collectAcademicSubjects(),
                 attRate: document.getElementById('att-rate').value,
                 attPattern: document.getElementById('att-pattern').value,
                 attImpact: document.getElementById('att-impact').value,
-                edAccommodations: document.getElementById('ed-accommodations').value.trim(),
-                edAccomEffectiveness: document.getElementById('ed-accom-effectiveness').value,
-                functionalRatings: getFunctionalRatings(),
+                functionalDomains: collectFunctionalDomains(),
+                bip: ((document.querySelector('input[name="bip"]:checked')) || {}).value || 'No',
                 assessmentRows: Array.from(document.querySelectorAll('.assessment-row')).map(row => ({
                     name: row.querySelector('.assess-name').value.trim(),
                     score: row.querySelector('.assess-score').value.trim(),
@@ -2183,14 +2490,12 @@
         // Paragraph 3 — Current Performance Data
         function buildParagraph3(data) {
             const name = data.name || 'This student';
-            const subjects = (data.subjectRows || []).filter(r => r.subject && r.level);
+            const subjects = (data.academicSubjects || []).filter(r => r.level);
             const assessRows = (data.assessmentRows || []).filter(r => r.name && r.score);
-            const interventions = (data.interventionRows || []).filter(r => r.name && r.outcome);
             const gp = data.goalProgress || {};
             const evalResults = (data.evalResults || '').trim();
-            const coursesList = data.edCoursesList || [];
 
-            if (!subjects.length && !assessRows.length && !interventions.length && !evalResults) return '';
+            if (!subjects.length && !assessRows.length && !evalResults) return '';
 
             const levelOrder = ['Significantly Below Grade Level','Below Grade Level','Approaching Grade Level','At Grade Level','Above Grade Level'];
             const sorted = subjects.length ? subjects.slice().sort((a,b) => levelOrder.indexOf(a.level) - levelOrder.indexOf(b.level)) : [];
@@ -2198,44 +2503,23 @@
 
             if (sorted.length > 0) {
                 sentences.push(`Current data reflects ${name}'s performance across academic areas.`);
-                const primary = sorted[0];
-                const rest = sorted.slice(1);
-                const matchedPrimary = findCourseForSubject(primary.subject, coursesList);
-                const primaryRef = matchedPrimary ? matchedPrimary.name : primary.subject;
-                let s;
-                if (matchedPrimary && matchedPrimary.grade) {
-                    s = `In ${primaryRef}, ${name} is currently earning a ${matchedPrimary.grade} and performing ${primary.level.toLowerCase()} relative to grade-level expectations`;
-                } else {
-                    s = `In ${primaryRef}, they are performing ${primary.level.toLowerCase()} relative to grade-level expectations`;
-                }
-                if (primary.barriers && primary.barriers.length) {
-                    s += `, with primary barriers including ${naturalList(primary.barriers.map(b => b.toLowerCase()))}`;
-                }
-                sentences.push(s + '.');
-
-                if (rest.length === 1) {
-                    const r = rest[0];
-                    const matchedR = findCourseForSubject(r.subject, coursesList);
-                    const rRef = matchedR ? matchedR.name : r.subject;
-                    let rs;
-                    if (matchedR && matchedR.grade) {
-                        rs = `In ${rRef}, they are currently earning a ${matchedR.grade} and performance is ${r.level.toLowerCase()}`;
+                const pronoun = 'they';
+                sorted.forEach((r, idx) => {
+                    const subj = r.label;
+                    let s;
+                    if (idx === 0) {
+                        s = `In ${subj}, ${name} is performing ${r.level.toLowerCase()}`;
                     } else {
-                        rs = `In ${rRef}, performance is ${r.level.toLowerCase()}`;
+                        s = `In ${subj}, ${pronoun} are performing ${r.level.toLowerCase()}`;
                     }
-                    if (r.barriers && r.barriers.length) rs += `, with challenges in ${naturalList(r.barriers.map(b => b.toLowerCase()))}`;
-                    sentences.push(rs + '.');
-                } else if (rest.length > 1) {
-                    const items = rest.map(r => {
-                        const matchedR = findCourseForSubject(r.subject, coursesList);
-                        const rRef = matchedR ? matchedR.name : r.subject;
-                        let item = `${rRef} — ${r.level.toLowerCase()}`;
-                        if (matchedR && matchedR.grade) item += ` (currently earning a ${matchedR.grade})`;
-                        if (r.barriers && r.barriers.length) item += ` — barriers: ${naturalList(r.barriers.slice(0,2).map(b => b.toLowerCase()))}`;
-                        return item;
-                    });
-                    sentences.push(`Across other subject areas, performance includes: ${items.join('; ')}.`);
-                }
+                    if (r.barriers && r.barriers.length) {
+                        const blist = naturalList(r.barriers.map(b => b.toLowerCase()));
+                        s += idx === 0
+                            ? `, with primary barriers including ${blist}`
+                            : `, with noted challenges in ${blist}`;
+                    }
+                    sentences.push(s + '.');
+                });
             }
 
             if (assessRows.length) {
@@ -2269,17 +2553,6 @@
                 });
             }
 
-            if (interventions.length) {
-                const items = interventions.map(r => {
-                    let item = r.name;
-                    if (r.duration) item += ` (${r.duration})`;
-                    item += `, yielding ${r.outcome.toLowerCase()}`;
-                    if (r.continuing === 'Yes') item += ' — continuing';
-                    else if (r.continuing === 'No') item += ' — discontinued';
-                    return item;
-                }).join('; ');
-                sentences.push(`With regard to prior intervention history, they have participated in ${items}.`);
-            }
 
             const domainMap = { reading:'Reading', math:'Math', writing:'Writing', behavior:'Behavior/Social-Emotional', communication:'Communication', functional:'Functional/Adaptive Skills', transition:'Transition', other: gp.otherLabel || null };
             const activeGoals = Object.keys(domainMap).filter(k => {
@@ -2389,26 +2662,84 @@
             return sentences.join(' ');
         }
 
+        // Functional Performance paragraph (v6)
+        const FUNC_RATING_LANG = {
+            'Significant Difficulty': { phrase: 'significant difficulty', generic: 'requiring substantial adult support' },
+            'Moderate Difficulty':   { phrase: 'moderate difficulty',   generic: 'benefiting from regular prompting and support' },
+            'Mild Difficulty':       { phrase: 'mild difficulty',       generic: 'manageable with current supports in place' }
+        };
+
+        function buildFunctionalSentence(d, name) {
+            const lang = FUNC_RATING_LANG[d.level];
+            if (!lang) return '';
+            // Lowercase the domain label after first capital is fine; keep as-is from label.
+            let s = `${d.label} is an area of ${lang.phrase} for ${name}`;
+            if (d.setting) {
+                s += `, particularly ${d.setting.toLowerCase()}`;
+            }
+            s += '. ';
+            if (d.obs) {
+                s += d.obs.charAt(0).toUpperCase() + d.obs.slice(1) + (/[.!?]$/.test(d.obs) ? '' : '.');
+            } else {
+                s += `This is ${lang.generic}.`;
+            }
+            return s.trim();
+        }
+
+        function buildFunctionalParagraph(data) {
+            const name = data.name || 'This student';
+            const domains = (data.functionalDomains || []).filter(d => d.level && d.level !== 'Age Appropriate');
+            if (!domains.length && (data.bip || 'No') !== 'Yes') return '';
+
+            const ef = domains.filter(d => d.group === 'ef');
+            const se = domains.filter(d => d.group === 'se');
+            const parts = [];
+
+            if (ef.length) {
+                const sentences = ef.map(d => buildFunctionalSentence(d, name)).filter(Boolean);
+                if (sentences.length) parts.push(`With regard to executive functioning, ${lowerFirst(sentences.join(' '))}`);
+            }
+            if (se.length) {
+                const sentences = se.map(d => buildFunctionalSentence(d, name)).filter(Boolean);
+                if (sentences.length) parts.push(`In terms of social-emotional functioning, ${lowerFirst(sentences.join(' '))}`);
+            }
+
+            let p = parts.join(' ');
+            if ((data.bip || 'No') === 'Yes') {
+                if (p) p += ' ';
+                p += `A Behavior Intervention Plan is currently in place to support ${name}'s behavioral needs.`;
+            }
+            return p;
+        }
+
+        function lowerFirst(str) {
+            if (!str) return str;
+            return str.charAt(0).toLowerCase() + str.slice(1);
+        }
+
         // Paragraph 7 — Impact Statement (closes the narrative)
         function buildParagraph7(data) {
             const name = data.name || 'This student';
             const disability = data.disability || 'disability';
-            const ratingLabels = {
-                'org-planning':'organization and planning', 'task-init':'task initiation',
-                'attention':'attention and focus', 'emotion-reg':'emotional regulation',
-                'social':'social interaction', 'indep-work':'independent work completion',
-                'multi-step':'following multi-step directions', 'self-adv':'self-advocacy'
-            };
+
+            // Functional impacts: domains rated with difficulty
+            const funcImpacts = (data.functionalDomains || [])
+                .filter(d => d.level && d.level !== 'Age Appropriate')
+                .map(d => d.label.toLowerCase());
+
+            // Academic barriers across the four subjects
             const barriers = [];
-            (data.subjectRows || []).forEach(r => (r.barriers || []).forEach(b => { if (!barriers.includes(b)) barriers.push(b); }));
-            const weakDomains = Object.entries(data.functionalRatings || {}).filter(([,v]) => v==='1'||v==='2').map(([k]) => ratingLabels[k]).filter(Boolean);
-            const allImpacts = [...new Set([...barriers.map(b => b.toLowerCase()), ...weakDomains])];
+            (data.academicSubjects || []).forEach(r => (r.barriers || []).forEach(b => {
+                if (!barriers.includes(b)) barriers.push(b);
+            }));
+
+            const allImpacts = [...new Set([...funcImpacts, ...barriers.map(b => b.toLowerCase())])];
 
             let p;
             if (allImpacts.length) {
                 p = `Taken together, this information indicates that ${name}'s ${disability} affects their ability to manage ${naturalList(allImpacts.slice(0,5))} within the general education curriculum.`;
             } else {
-                p = `Based on the data above, ${name}'s ${disability} has a documented impact on their ability to access the general education curriculum and participate fully in the least restrictive environment.`;
+                p = `Taken together, this information indicates that ${name}'s ${disability} affects their ability to access the general education curriculum and participate fully in the least restrictive environment.`;
             }
 
             const rawCourses = data.edCoursesList || [];
@@ -2417,24 +2748,13 @@
                 ...rawCourses,
                 ...(otherCourse ? [{ name: otherCourse, code: 'OTHER', grade: '' }] : [])
             ];
-            const accomm = data.edAccommodations || '';
 
-            if (allCourses.length && accomm) {
+            if (allCourses.length) {
                 const names = allCourses.map(c => typeof c === 'object' ? c.name : c);
                 const courseStr = names.length > 3
                     ? naturalList(names.slice(0,3)) + ' and additional courses'
                     : naturalList(names);
-                p += ` They currently access ${courseStr} with the support of ${accomm}.`;
-            } else if (accomm) {
-                p += ` To support access to the curriculum, the IEP team has put in place accommodations including ${accomm}.`;
-            } else if (allCourses.length) {
-                const names = allCourses.map(c => typeof c === 'object' ? c.name : c);
-                p += ` Current course enrollment includes ${naturalList(names.slice(0,3))}${allCourses.length > 3 ? ' and additional courses' : ''}.`;
-            }
-
-            const eff = data.edAccomEffectiveness || '';
-            if (eff && !eff.startsWith('Highly effective')) {
-                p += ` Despite these supports, accommodations have been ${eff.split('—')[0].trim().toLowerCase()}, and the team continues to evaluate the need for additional measures.`;
+                p += ` They currently access ${courseStr}.`;
             }
             return p;
         }
@@ -2447,6 +2767,7 @@
             const p4 = buildParagraph4(data); if (p4) paragraphs.push(p4);
             const p5 = buildParagraph5(data); if (p5) paragraphs.push(p5);
             const p6 = buildParagraph6(data); if (p6) paragraphs.push(p6);
+            const pf = buildFunctionalParagraph(data); if (pf) paragraphs.push(pf);
             const p7 = buildParagraph7(data); if (p7) paragraphs.push(p7);
             return paragraphs;
         }
@@ -2510,34 +2831,24 @@
             updateSecondaryNote();
             // SLD Block
             ['sld-decoding','sld-written'].forEach(id => { document.getElementById(id).checked = true; });
-            document.getElementById('sld-decoding').checked = true;
+            document.getElementById('sld-math-calc').checked = true;
             updateSldReadingProgramVisibility();
             document.getElementById('sld-program').value = 'Reading 01 — Literacy Foundations (RDYR01)';
+            document.getElementById('sld-math-program').value = 'Ascend Math';
             // Strengths
             ['str-ac-verbal','str-ac-visual','str-ac-hands','str-ac-tech','str-ac-science'].forEach(id => { document.getElementById(id).checked = true; });
             document.getElementById('str-ac-other').value = '';
             ['str-fn-advocacy','str-fn-punctual','str-fn-voc','str-fn-adults'].forEach(id => { document.getElementById(id).checked = true; });
             document.getElementById('str-fn-other').value = 'Demonstrates persistence and willingness to ask for help';
-            // Academic Performance — locked rows
-            document.querySelectorAll('#subjectRows .subject-row:not(.subject-row-locked)').forEach(el => el.remove());
-            const lockedExData = {
-                'Reading': { level: 'Below Grade Level', barriers: ['Decoding','Fluency','Comprehension'] },
-                'Writing': { level: 'Significantly Below Grade Level', barriers: ['Written Output','Organization','Spelling'] },
-                'Math':    { level: 'Approaching Grade Level', barriers: ['Processing Speed','Organization'] }
-            };
-            document.querySelectorAll('.subject-row-locked').forEach(row => {
-                const subj = row.querySelector('.subj-area').value;
-                const d = lockedExData[subj];
-                if (d) {
-                    row.querySelector('.subj-level').value = d.level;
-                    row.querySelectorAll('.subj-barrier').forEach(cb => { cb.checked = d.barriers.includes(cb.value); });
-                }
+            // Academic Performance — four subjects
+            document.getElementById('acad-perf-literacy').value = 'Below Grade Level';
+            document.getElementById('acad-perf-math').value = 'Approaching Grade Level';
+            document.getElementById('acad-perf-science').value = 'At Grade Level';
+            document.getElementById('acad-perf-socialscience').value = 'Approaching Grade Level';
+            ['bar-literacy-decoding','bar-literacy-fluency','bar-literacy-comprehension',
+             'bar-math-calculation','bar-math-multistep','bar-math-problemsolving'].forEach(id => {
+                const cb = document.getElementById(id); if (cb) cb.checked = true;
             });
-            addSubjectRow('Science','At Grade Level',[]);
-            document.getElementById('interventionRows').innerHTML = '';
-            addInterventionRow('Wilson Reading','1 year','Significant growth','Yes');
-            addInterventionRow('Extended time (50%)','2+ years','Significant growth','Yes');
-            addInterventionRow('Graphic organizer templates','1 semester','Some growth','Yes');
             // Attendance
             document.getElementById('att-rate').value = 'Satisfactory (fewer than 5% of days missed)';
             document.getElementById('att-pattern').value = 'No notable pattern';
@@ -2557,18 +2868,34 @@
             document.getElementById('teacherFeedbackRows').innerHTML = '';
             tfRowCount = 0;
             selectedCourses.forEach(c => syncCourseToFeedback(c.code, c.name));
-            document.getElementById('ed-accommodations').value = 'Extended time (50%), preferential seating, speech-to-text, text-to-speech, graphic organizers, calculator access, chunked assignments, reduced assignment length';
-            document.getElementById('ed-accom-effectiveness').value = 'Mostly effective — some barriers remain despite accommodations';
-            // Functional Ratings
-            [['org-planning','3'],['task-init','2'],['attention','2'],['emotion-reg','3'],['social','4'],['indep-work','3'],['multi-step','2'],['self-adv','4']].forEach(([d,v]) => {
-                const btn = document.querySelector(`[data-domain="${d}"] [data-val="${v}"]`);
-                if (btn) setRating(btn);
+            // Functional Performance — card selections, settings, observations
+            const exFunc = {
+                'func-org':        { level: 'Moderate Difficulty',    setting: 'Academic classes primarily', obs: 'frequently loses materials between classes' },
+                'func-init':       { level: 'Moderate Difficulty',    setting: 'Academic classes primarily', obs: 'requires multiple prompts to begin independent work' },
+                'func-attn':       { level: 'Significant Difficulty', setting: 'Across all settings',         obs: 'attention decreases significantly after 10–15 minutes' },
+                'func-directions': { level: 'Mild Difficulty',        setting: '',                            obs: '' },
+                'func-reg':        { level: 'Mild Difficulty',        setting: '',                            obs: '' },
+                'func-social':     { level: 'Age Appropriate',        setting: '',                            obs: '' },
+                'func-work':       { level: 'Moderate Difficulty',    setting: 'Both structured and unstructured settings', obs: '' },
+                'func-advocacy':   { level: 'Mild Difficulty',        setting: '',                            obs: '' }
+            };
+            document.querySelectorAll('.func-card.selected').forEach(c => c.classList.remove('selected'));
+            Object.entries(exFunc).forEach(([domainId, cfg]) => {
+                const wrap = document.querySelector(`[data-funcdomain="${domainId}"]`);
+                if (wrap && cfg.level) {
+                    const card = Array.from(wrap.querySelectorAll('.func-card')).find(c => c.dataset.level === cfg.level);
+                    if (card) card.classList.add('selected');
+                }
+                const setEl = document.getElementById(domainId + '-setting'); if (setEl) setEl.value = cfg.setting || '';
+                const obsEl = document.getElementById(domainId + '-obs'); if (obsEl) obsEl.value = cfg.obs || '';
             });
+            // BIP
+            document.getElementById('bip-no').checked = true;
             // Assessment Data
             document.getElementById('assessmentRows').innerHTML = '';
             addAssessmentRow('Star Reading','14','Percentile','');
             addAssessmentRow('Star Math','48','Percentile','');
-            addAssessmentRow('(P)ACT','15','Standard Score','');
+            addAssessmentRow('(P)ACT','42','Percentile','');
             document.getElementById('eval-results').value = 'Triennial reevaluation completed March 2025 confirmed continued eligibility under Specific Learning Disability in reading decoding, reading fluency, and written expression. WISC-V: average verbal comprehension and fluid reasoning, below-average processing speed (SS 78). WJ-IV: Basic Reading SS 74, Reading Fluency SS 78, Written Expression SS 70.';
             // Goal Progress
             document.getElementById('goal-reading').value = 'Making Some Progress';
@@ -2645,27 +2972,25 @@
             document.querySelectorAll('select').forEach(el => { el.selectedIndex = 0; });
             document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], textarea').forEach(el => { el.value = ''; });
             document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => { el.checked = false; });
-            document.querySelectorAll('.rating-btn').forEach(b => {
-                b.classList.remove('selected','border-red-400','bg-red-50','text-red-600','border-amber-400','bg-amber-50','text-amber-600','border-blue-400','bg-blue-50','text-blue-600','border-green-400','bg-green-50','text-green-600');
-                b.classList.add('border-slate-300','bg-white','text-slate-500');
-            });
+            // Clear functional domain card selections (v6)
+            document.querySelectorAll('.func-card.selected').forEach(c => c.classList.remove('selected'));
+            // Reset BIP to No (v6)
+            const bipNo = document.getElementById('bip-no'); if (bipNo) bipNo.checked = true;
             document.querySelectorAll('.conditional-block').forEach(el => el.classList.remove('active'));
             document.getElementById('secondaryNote').classList.add('hidden');
             document.getElementById('transitionSection').classList.add('hidden');
             document.getElementById('sld-program-row').classList.add('hidden');
+            document.getElementById('sld-math-program-row')?.classList.add('hidden');
+            document.getElementById('md-sld-math-program-row')?.classList.add('hidden');
             document.getElementById('trans-indep-goal-row').classList.add('hidden');
             selectedCourses = [];
             renderCourseTable();
             document.getElementById('courseOtherRow').classList.add('hidden');
             document.getElementById('courseDropdown').classList.add('hidden');
-            // Keep locked rows; clear their values; remove added rows
-            document.querySelectorAll('#subjectRows .subject-row:not(.subject-row-locked)').forEach(el => el.remove());
-            document.getElementById('interventionRows').innerHTML = '';
-            addInterventionRow();
             document.getElementById('assessmentRows').innerHTML = '';
             addAssessmentRow('Star Reading','','Percentile','');
             addAssessmentRow('Star Math','','Percentile','');
-            addAssessmentRow('(P)ACT','','Standard Score','');
+            addAssessmentRow('(P)ACT','','Percentile','');
             // Clear Transition DNA
             const transDNAInput = document.getElementById('trans-dna-input');
             if (transDNAInput) transDNAInput.value = '';
@@ -2712,10 +3037,9 @@
             data['_fn'] = Array.from(document.querySelectorAll('input[name="fn-strength"]:checked')).map(el => el.value);
             data['_svc'] = Array.from(document.querySelectorAll('input[name="svc-model"]:checked')).map(el => el.value);
             data['_selectedCourses'] = selectedCourses.slice();
-            data['_ratings'] = getFunctionalRatings();
-            data['_lockedSubjectRows'] = Array.from(document.querySelectorAll('.subject-row-locked')).map(r => ({ subject: r.querySelector('.subj-area').value, level: r.querySelector('.subj-level').value, barriers: Array.from(r.querySelectorAll('.subj-barrier:checked')).map(el => el.value) }));
-            data['_subjectRows'] = Array.from(document.querySelectorAll('.subject-row:not(.subject-row-locked)')).map(r => ({ subject: r.querySelector('.subj-area').value, level: r.querySelector('.subj-level').value, barriers: Array.from(r.querySelectorAll('.subj-barrier:checked')).map(el => el.value) }));
-            data['_interventionRows'] = Array.from(document.querySelectorAll('.intervention-row')).map(r => ({ name: r.querySelector('.interv-name').value, duration: r.querySelector('.interv-duration').value, outcome: r.querySelector('.interv-outcome').value, continuing: ((r.querySelector('.interv-cont:checked')) || {}).value || '' }));
+            data['_funcLevels'] = {};
+            FUNC_DOMAINS.forEach(d => { data['_funcLevels'][d.id] = getFuncDomainLevel(d.id); });
+            data['bip'] = ((document.querySelector('input[name="bip"]:checked')) || {}).value || 'No';
             data['_assessmentRows'] = Array.from(document.querySelectorAll('.assessment-row')).map(r => ({ name: r.querySelector('.assess-name').value, score: r.querySelector('.assess-score').value, scoreType: r.querySelector('.assess-type').value, date: r.querySelector('.assess-date').value }));
             data['_teacherFeedbackRows'] = Array.from(document.querySelectorAll('.teacher-feedback-row')).map(r => ({ label: r.querySelector('.tf-label')?.value || '', code: r.querySelector('.tf-code')?.value || '', courseCode: r.dataset.courseCode || '', autoAdded: r.dataset.autoAdded === 'true' }));
             data['_decodedTeacherFeedback'] = window._decodedTeacherFeedback || [];
@@ -2731,38 +3055,28 @@
                 if (el.type === 'checkbox') el.checked = !!data[key];
                 else if (el.type !== 'radio') el.value = data[key] || '';
             });
-            ['ed-bip','trans-indep'].forEach(name => {
+            ['ed-bip','md-ed-bip','trans-indep','bip'].forEach(name => {
                 const v = data[name]; if (!v) return;
                 const r = document.querySelector(`input[name="${name}"][value="${v}"]`);
                 if (r) r.checked = true;
             });
             if (data['_ac']) document.querySelectorAll('input[name="ac-strength"]').forEach(cb => { cb.checked = data['_ac'].includes(cb.value); });
             if (data['_fn']) document.querySelectorAll('input[name="fn-strength"]').forEach(cb => { cb.checked = data['_fn'].includes(cb.value); });
-            if (data['_ratings']) Object.entries(data['_ratings']).forEach(([domain, val]) => {
-                if (val) { const btn = document.querySelector(`[data-domain="${domain}"] [data-val="${val}"]`); if (btn) setRating(btn); }
+            // Restore functional domain card selections (v6)
+            document.querySelectorAll('.func-card.selected').forEach(c => c.classList.remove('selected'));
+            if (data['_funcLevels']) Object.entries(data['_funcLevels']).forEach(([domainId, level]) => {
+                if (!level) return;
+                const wrap = document.querySelector(`[data-funcdomain="${domainId}"]`);
+                if (!wrap) return;
+                const card = Array.from(wrap.querySelectorAll('.func-card')).find(c => c.dataset.level === level);
+                if (card) card.classList.add('selected');
             });
-            initLockedSubjectRows();
-            (data['_lockedSubjectRows'] || []).forEach(saved => {
-                const hidden = document.querySelector(`.subject-row-locked .subj-area[value="${saved.subject}"]`);
-                const row = hidden?.closest('.subject-row-locked');
-                if (!row) return;
-                if (saved.level) row.querySelector('.subj-level').value = saved.level;
-                (saved.barriers || []).forEach(b => {
-                    const cb = Array.from(row.querySelectorAll('.subj-barrier')).find(el => el.value === b);
-                    if (cb) cb.checked = true;
-                });
-            });
-            document.querySelectorAll('#subjectRows .subject-row:not(.subject-row-locked)').forEach(el => el.remove());
-            (data['_subjectRows'] || []).forEach(r => addSubjectRow(r.subject, r.level, r.barriers));
-            document.getElementById('interventionRows').innerHTML = '';
-            (data['_interventionRows'] || []).forEach(r => addInterventionRow(r.name, r.duration, r.outcome, r.continuing));
-            if (!(data['_interventionRows'] || []).length) addInterventionRow();
             document.getElementById('assessmentRows').innerHTML = '';
             (data['_assessmentRows'] || []).forEach(r => addAssessmentRow(r.name, r.score, r.scoreType, r.date));
             if (!(data['_assessmentRows'] || []).length) {
                 addAssessmentRow('Star Reading','','Percentile','');
                 addAssessmentRow('Star Math','','Percentile','');
-                addAssessmentRow('(P)ACT','','Standard Score','');
+                addAssessmentRow('(P)ACT','','Percentile','');
             }
             updateDisabilityBlock(); updateTransitionVisibility(); updateSecondaryNote();
             document.getElementById('trans-indep-goal-row').classList.toggle('hidden', data['trans-indep'] !== 'Yes');
@@ -2833,36 +3147,6 @@
 
         let assessRowCount = 0;
 
-        function setRating(btn) {
-            const group = btn.closest('[data-domain]');
-            const colorMap = {
-                '1': ['border-red-400','bg-red-50','text-red-600'],
-                '2': ['border-amber-400','bg-amber-50','text-amber-600'],
-                '3': ['border-blue-400','bg-blue-50','text-blue-600'],
-                '4': ['border-green-400','bg-green-50','text-green-600']
-            };
-            group.querySelectorAll('.rating-btn').forEach(b => {
-                b.classList.remove('selected',
-                    'border-red-400','bg-red-50','text-red-600',
-                    'border-amber-400','bg-amber-50','text-amber-600',
-                    'border-blue-400','bg-blue-50','text-blue-600',
-                    'border-green-400','bg-green-50','text-green-600');
-                b.classList.add('border-slate-300','bg-white','text-slate-500');
-            });
-            btn.classList.remove('border-slate-300','bg-white','text-slate-500');
-            btn.classList.add('selected', ...colorMap[btn.dataset.val]);
-        }
-
-        function getFunctionalRatings() {
-            const domains = ['org-planning','task-init','attention','emotion-reg','social','indep-work','multi-step','self-adv'];
-            const result = {};
-            domains.forEach(d => {
-                const sel = document.querySelector(`[data-domain="${d}"] .rating-btn.selected`);
-                result[d] = sel ? sel.dataset.val : '';
-            });
-            return result;
-        }
-
         function createAssessmentRow(name, score, scoreType, dateVal) {
             assessRowCount++;
             const types = ['Percentile','Grade Equivalent','Standard Score','Lexile','Scale Score','Raw Score','Other'];
@@ -2919,117 +3203,6 @@
             );
         }
 
-        let subjRowCount = 0;
-        let intervRowCount = 0;
-
-        function createSubjectRow(subject, level, barriers, locked) {
-            subjRowCount++;
-            const levels = ['Significantly Below Grade Level','Below Grade Level','Approaching Grade Level','At Grade Level','Above Grade Level'];
-            const barrierList = ['Decoding','Fluency','Comprehension','Calculation','Application','Written Output','Attention','Processing Speed','Organization','Behavior','Attendance'];
-            const levelOpts = levels.map(s => `<option value="${s}"${s===level?' selected':''}>${s}</option>`).join('');
-            const barrierCBs = barrierList.map(b => {
-                const chk = barriers && barriers.includes(b) ? ' checked' : '';
-                return `<label class="flex items-center gap-x-1 text-[11px] text-slate-700 cursor-pointer"><input type="checkbox" class="subj-barrier rounded border-slate-300" value="${b}"${chk}><span>${b}</span></label>`;
-            }).join('');
-
-            const div = document.createElement('div');
-            if (locked) {
-                div.className = 'subject-row subject-row-locked border border-slate-200 border-l-4 border-l-purple-300 rounded-lg p-3 mb-2 bg-slate-50';
-                div.innerHTML = `
-                    <input type="hidden" class="subj-area" value="${subject}">
-                    <div class="flex flex-wrap items-start gap-2 mb-2">
-                        <span class="text-xs font-bold text-purple-800 w-16 flex-shrink-0 pt-1.5">${subject}</span>
-                        <div class="flex-1 min-w-[160px]">
-                            <select class="subj-level form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
-                                <option value="">Performance level...</option>${levelOpts}
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-semibold text-slate-500 mb-1">Primary barrier(s):</div>
-                        <div class="flex flex-wrap gap-x-3 gap-y-1">${barrierCBs}</div>
-                    </div>`;
-            } else {
-                const subjects = ['English','Math','Writing','Science','Social Studies','Elective/Other'];
-                const subjectOpts = subjects.map(s => `<option value="${s}"${s===subject?' selected':''}>${s}</option>`).join('');
-                div.className = 'subject-row border border-slate-200 rounded-lg p-3 mb-2 bg-slate-50';
-                div.innerHTML = `
-                    <div class="flex flex-wrap items-start gap-2 mb-2">
-                        <div class="flex-1 min-w-[110px]">
-                            <select class="subj-area form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
-                                <option value="">Subject...</option>${subjectOpts}
-                            </select>
-                        </div>
-                        <div class="flex-1 min-w-[160px]">
-                            <select class="subj-level form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
-                                <option value="">Performance level...</option>${levelOpts}
-                            </select>
-                        </div>
-                        <button type="button" onclick="this.closest('.subject-row').remove()" class="text-slate-400 hover:text-red-500 font-bold text-lg leading-none px-1 mt-0.5">×</button>
-                    </div>
-                    <div>
-                        <div class="text-[10px] font-semibold text-slate-500 mb-1">Primary barrier(s):</div>
-                        <div class="flex flex-wrap gap-x-3 gap-y-1">${barrierCBs}</div>
-                    </div>`;
-            }
-            return div;
-        }
-
-        function addSubjectRow(subject, level, barriers) {
-            document.getElementById('subjectRows').appendChild(
-                createSubjectRow(subject||'', level||'', barriers||[], false)
-            );
-        }
-
-        function initLockedSubjectRows() {
-            const container = document.getElementById('subjectRows');
-            container.querySelectorAll('.subject-row-locked').forEach(el => el.remove());
-            ['Reading','Writing','Math'].forEach(subj => {
-                container.appendChild(createSubjectRow(subj, '', [], true));
-            });
-        }
-
-        function createInterventionRow(name, duration, outcome, continuing) {
-            intervRowCount++;
-            const n = intervRowCount;
-            const durations = ['Less than 1 quarter','1 semester','1 year','2+ years'];
-            const outcomes = ['Minimal growth','Some growth','Significant growth','Goal met'];
-            const durOpts = durations.map(d => `<option value="${d}"${d===duration?' selected':''}>${d}</option>`).join('');
-            const outOpts = outcomes.map(o => `<option value="${o}"${o===outcome?' selected':''}>${o}</option>`).join('');
-
-            const div = document.createElement('div');
-            div.className = 'intervention-row border border-slate-200 rounded-lg p-3 mb-2 bg-slate-50';
-            div.innerHTML = `
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="flex-1 min-w-[140px]">
-                        <input type="text" class="interv-name form-input w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs" placeholder="Intervention name">
-                    </div>
-                    <div>
-                        <select class="interv-duration form-input px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
-                            <option value="">Duration...</option>${durOpts}
-                        </select>
-                    </div>
-                    <div>
-                        <select class="interv-outcome form-input px-2 py-1.5 border border-slate-300 rounded-lg text-xs bg-white">
-                            <option value="">Outcome...</option>${outOpts}
-                        </select>
-                    </div>
-                    <div class="flex items-center gap-x-2">
-                        <span class="text-[10px] font-semibold text-slate-500 whitespace-nowrap">Continuing?</span>
-                        <label class="flex items-center gap-x-1 text-xs cursor-pointer"><input type="radio" name="interv-cont-${n}" class="interv-cont" value="Yes"${continuing==='Yes'?' checked':''}><span>Yes</span></label>
-                        <label class="flex items-center gap-x-1 text-xs cursor-pointer"><input type="radio" name="interv-cont-${n}" class="interv-cont" value="No"${continuing==='No'?' checked':''}><span>No</span></label>
-                    </div>
-                    <button type="button" onclick="this.closest('.intervention-row').remove()" class="text-slate-400 hover:text-red-500 font-bold text-lg leading-none px-1">×</button>
-                </div>`;
-            div.querySelector('.interv-name').value = name || '';
-            return div;
-        }
-
-        function addInterventionRow(name, duration, outcome, continuing) {
-            document.getElementById('interventionRows').appendChild(
-                createInterventionRow(name||'', duration||'', outcome||'', continuing||'')
-            );
-        }
 
         // ─── Wizard / Progress / Collapse ───────────────────────────────────────
 
@@ -3074,14 +3247,16 @@
                 case 1:
                     return document.querySelectorAll('input[name="ac-strength"]:checked, input[name="fn-strength"]:checked').length > 0;
                 case 2:
-                    return Array.from(document.querySelectorAll('.subject-row')).some(r =>
-                        r.querySelector('.subj-area').value && r.querySelector('.subj-level').value);
+                    return ACAD_SUBJECTS.some(s => {
+                        const el = document.getElementById('acad-perf-' + s.key);
+                        return el && el.value;
+                    });
                 case 3:
                     return selectedCourses.length > 0;
                 case 4:
                     return !!document.getElementById('att-rate').value;
                 case 5:
-                    return Object.values(getFunctionalRatings()).some(v => v);
+                    return FUNC_DOMAINS.some(d => getFuncDomainLevel(d.id));
                 case 6:
                     return true;
                 case 7:
@@ -3105,8 +3280,11 @@
                     return n > 0 ? `${numWord(n)} strength${n===1?'':'s'} selected` : 'No strengths selected yet';
                 }
                 case 2: {
-                    const n = document.querySelectorAll('.subject-row').length;
-                    return n > 0 ? `${numWord(n)} subject${n===1?'':'s'} entered` : 'No subjects added';
+                    const n = ACAD_SUBJECTS.filter(s => {
+                        const el = document.getElementById('acad-perf-' + s.key);
+                        return el && el.value;
+                    }).length;
+                    return n > 0 ? `${numWord(n)} of four subjects rated` : 'No subjects rated';
                 }
                 case 3: {
                     const n = selectedCourses.length;
@@ -3117,7 +3295,7 @@
                     return v ? v.split('(')[0].trim() : 'Not entered';
                 }
                 case 5: {
-                    const n = Object.values(getFunctionalRatings()).filter(v=>v).length;
+                    const n = FUNC_DOMAINS.filter(d => getFuncDomainLevel(d.id)).length;
                     return `${numWord(n)} of 8 domains rated`;
                 }
                 case 6:
@@ -3233,10 +3411,25 @@
             lastSection.appendChild(nav);
         }
 
+        // The Generate step (index 8) is the only step that surfaces the output panel.
+        // The left column is always full width; the output area lives inside the
+        // Generate step panel, which the wizard shows/hides automatically.
+        function updateLayoutForStep(stepIndex) {
+            const isGenerate = stepIndex === 8;
+            const left = document.getElementById('leftColumn');
+            if (left) {
+                left.classList.remove('lg:col-span-7', 'lg:col-span-5');
+                left.classList.add('lg:col-span-12');
+            }
+            const genBtn = document.getElementById('generateBtn');
+            if (genBtn) genBtn.classList.toggle('hidden', !isGenerate);
+        }
+
         function goToStep(n) {
             n = Math.max(0, Math.min(WIZARD_STEPS.length - 1, n));
             currentStep = n;
             showStepElements(n);
+            updateLayoutForStep(n);
             renderProgressTracker();
             const tracker = document.getElementById('progressTracker');
             if (tracker) tracker.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3408,21 +3601,33 @@
         }
 
         function updateSldReadingProgramVisibility() {
-            const readingChecked = ['sld-decoding','sld-fluency','sld-comprehension'].some(id => {
+            const readingChecked = ['sld-decoding','sld-fluency','sld-comprehension','sld-written','sld-spelling'].some(id => {
                 const el = document.getElementById(id);
                 return el && el.checked;
             });
             const row = document.getElementById('sld-program-row');
             if (row) row.classList.toggle('hidden', !readingChecked);
+            const mathChecked = ['sld-math-calc','sld-math-ps'].some(id => {
+                const el = document.getElementById(id);
+                return el && el.checked;
+            });
+            const mathRow = document.getElementById('sld-math-program-row');
+            if (mathRow) mathRow.classList.toggle('hidden', !mathChecked);
         }
 
         function updateMdSldReadingProgramVisibility() {
-            const readingChecked = ['md-sld-decoding','md-sld-fluency','md-sld-comprehension'].some(id => {
+            const readingChecked = ['md-sld-decoding','md-sld-fluency','md-sld-comprehension','md-sld-written','md-sld-spelling'].some(id => {
                 const el = document.getElementById(id);
                 return el && el.checked;
             });
             const row = document.getElementById('md-sld-program-row');
             if (row) row.classList.toggle('hidden', !readingChecked);
+            const mathChecked = ['md-sld-math-calc','md-sld-math-ps'].some(id => {
+                const el = document.getElementById(id);
+                return el && el.checked;
+            });
+            const mathRow = document.getElementById('md-sld-math-program-row');
+            if (mathRow) mathRow.classList.toggle('hidden', !mathChecked);
         }
 
         function toggleAccordion(contentId) {
@@ -3605,17 +3810,15 @@
             initializeTailwind();
             initCoursePicker();
             document.getElementById('copyBtn').disabled = true;
-            initLockedSubjectRows();
-            addInterventionRow();
             addAssessmentRow('Star Reading','','Percentile','');
             addAssessmentRow('Star Math','','Percentile','');
-            addAssessmentRow('(P)ACT','','Standard Score','');
+            addAssessmentRow('(P)ACT','','Percentile','');
             document.getElementById('disability').addEventListener('change', updateDisabilityBlock);
-            ['sld-decoding','sld-fluency','sld-comprehension'].forEach(id => {
+            ['sld-decoding','sld-fluency','sld-comprehension','sld-written','sld-spelling','sld-math-calc','sld-math-ps'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', updateSldReadingProgramVisibility);
             });
-            ['md-sld-decoding','md-sld-fluency','md-sld-comprehension'].forEach(id => {
+            ['md-sld-decoding','md-sld-fluency','md-sld-comprehension','md-sld-written','md-sld-spelling','md-sld-math-calc','md-sld-math-ps'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.addEventListener('change', updateMdSldReadingProgramVisibility);
             });
@@ -3630,7 +3833,7 @@
             });
             document.getElementById('secondaryDisability').addEventListener('change', updateSecondaryNote);
             initWizard();
-            console.log('%c[IEP Builder v5.0 — Niles North] Ready.', 'color:#4c2c7b;font-size:9px');
+            console.log('%c[IEP Builder v6.0 — Niles North] Ready.', 'color:#4c2c7b;font-size:9px');
         }
 
         window.onload = initializeApp;
